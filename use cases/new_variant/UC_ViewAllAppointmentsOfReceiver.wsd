@@ -1,0 +1,16 @@
+@startuml ViewAllAppointmentsOfReceiver 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+database "База Данных" as DB
+
+Секретарь -> FE: Выбирает руководителя\nи период
+FE -> API: GET /appointments?receiver_id=X&date_from=...&date_to=...
+API -> AppService: Поиск встреч
+AppService -> DB: Запрос встреч руководителя
+DB --> AppService: Список встреч
+AppService --> API: 200 OK
+API --> FE: Данные встреч
+FE --> Секретарь: Таблица с фильтрами
+@enduml

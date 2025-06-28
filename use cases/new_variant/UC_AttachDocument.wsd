@@ -1,0 +1,27 @@
+@startuml attDoc
+actor Посетитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Документов" as DocService
+database "Хранилище" as Storage
+
+Посетитель -> FE: Выбирает "Прикрепить файл"
+FE -> API: POST /appointments/{id}/attachments
+API -> DocService: Загрузить документ
+activate DocService
+
+DocService -> DocService: Проверить файл
+alt Неподдерживаемый формат
+  DocService --> API: 415 Ошибка формата
+  API --> FE: Ошибка
+  FE --> Посетитель: Сообщение об ошибке
+else Успех
+  DocService -> Storage: Сохранить файл
+  Storage --> DocService: Метаданные файла
+  DocService -> DB: Создать запись документа
+  DocService --> API: 201 Создано
+  API --> FE: Успех
+  FE --> Посетитель: Новое вложение
+end
+deactivate DocService
+@enduml

@@ -1,0 +1,19 @@
+@startuml EditOwnScheduledAppointment 
+actor Руководитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+participant "Сервис Календаря" as Calendar
+participant "Сервис Уведомлений" as Notify
+
+Руководитель -> FE: Редактирует встречу
+FE -> API: PUT /appointments/{id}\n{новые данные}
+API -> AppService: Обновить встречу
+AppService -> Calendar: Проверить доступность
+Calendar --> AppService: Доступность подтверждена
+AppService -> DB: Обновить данные
+AppService -> Notify: Уведомить участников
+AppService --> API: 200 OK
+API --> FE: Успех
+FE --> Руководитель: Обновленные данные встречи
+@enduml

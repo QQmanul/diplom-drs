@@ -1,0 +1,17 @@
+@startuml SendManualNotification 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Уведомлений" as Notify
+database "База Данных" as DB
+
+Секретарь -> FE: Составляет сообщение\nвыбирает получателей
+FE -> API: POST /notifications/manual\n{"recipients": [...], "message": "..."}
+API -> Notify: Отправить уведомление
+Notify -> DB: Получить контакты
+DB --> Notify: Email/телефоны
+Notify -> Notify: Отправить через каналы
+Notify --> API: 202 Accepted
+API --> FE: Успех
+FE --> Секретарь: Подтверждение отправки
+@enduml

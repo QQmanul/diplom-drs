@@ -1,0 +1,16 @@
+@startuml ViewSystemLogs 
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Журналов" as LogService
+database "База Данных" as DB
+
+Администратор -> FE: Открывает "Системные журналы"
+FE -> API: GET /logs?from=...&to=...
+API -> LogService: Получить журналы за период
+LogService -> DB: Запрос логов
+DB --> LogService: Список логов
+LogService --> API: 200 OK + данные
+API --> FE: Данные логов
+FE --> Администратор: Отображение логов
+@enduml

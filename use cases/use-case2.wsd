@@ -1,0 +1,200 @@
+@startuml useacase2
+!pragma useVerticalIf on ' Для лучшего расположения страниц, если их много
+
+' ============================================
+' ==          ОБЩИЕ USE CASES             ==
+' ============================================
+' Эти use cases могут быть видны на всех страницах или объявлены один раз
+' и затем использоваться акторами на их страницах.
+' Для простоты, объявим их здесь, а акторы будут к ним обращаться.
+
+package "Общие функции системы" {
+  usecase "Авторизоваться в системе" as UC_Login
+  usecase "Выйти из системы" as UC_Logout
+  usecase "Управлять своим профилем" as UC_ManageProfile
+  usecase "Получать уведомления" as UC_ReceiveNotifications
+  usecase "Просмотреть справочную информацию" as UC_ViewSystemInfo
+}
+
+' ============================================
+' ==          СТРАНИЦА: ПОСЕТИТЕЛЬ        ==
+' ============================================
+newpage "Роль: Посетитель"
+
+actor Посетитель as visitor
+
+rectangle "Функции Посетителя" {
+  usecase "Создать заявку на встречу" as UC_CreateAppointment
+  usecase "Просмотреть свои встречи" as UC_ViewOwnAppointments
+  usecase "Редактировать свою заявку" as UC_EditOwnAppointment
+  usecase "Отменить свою заявку" as UC_CancelOwnAppointment
+  usecase "Прикрепить документ к встрече" as UC_AttachDocumentToOwnAppointment
+  usecase "Скачать документ со встречи" as UC_DownloadDocumentFromOwnAppointment
+  usecase "Просмотреть свою позицию в очереди" as UC_ViewQueuePosition
+}
+
+visitor -- UC_Login
+visitor -- UC_Logout
+visitor -- UC_ManageProfile
+visitor -- UC_ReceiveNotifications
+visitor -- UC_ViewSystemInfo
+
+visitor -- UC_CreateAppointment
+visitor -- UC_ViewOwnAppointments
+visitor -- UC_EditOwnAppointment
+visitor -- UC_CancelOwnAppointment
+visitor -- UC_AttachDocumentToOwnAppointment
+visitor -- UC_DownloadDocumentFromOwnAppointment
+visitor -- UC_ViewQueuePosition
+
+UC_CreateAppointment ..> UC_ReceiveNotifications : <<extend>> "уведомить заинтересованных"
+UC_CancelOwnAppointment ..> UC_ReceiveNotifications : <<extend>> "уведомить заинтересованных"
+
+
+' ============================================
+' ==          СТРАНИЦА: СЕКРЕТАРЬ         ==
+' ============================================
+newpage "Роль: Секретарь"
+
+actor Секретарь as secretary
+
+rectangle "Функции Секретаря" {
+  package "Управление встречами руководителя" {
+    usecase "Управлять графиком руководителя" as UC_ManageReceiverSchedule
+    usecase "Просмотреть все встречи руководителя" as UC_ViewAllAppointmentsOfReceiver
+    usecase "Подтвердить/Отклонить встречу" as UC_ConfirmRejectAppointment
+    usecase "Изменить статус встречи" as UC_ChangeAppointmentStatus
+    usecase "Прикрепить документ к встрече руководителя" as UC_AttachDocumentToAnyAppointment
+    usecase "Скачать документ со встречи руководителя" as UC_DownloadDocumentFromAnyAppointment
+  }
+  package "Управление очередью руководителя" {
+    usecase "Управлять очередью приёма" as UC_ManageQueue
+    usecase "Просмотреть очередь руководителя" as UC_ViewQueueSec
+    usecase "Изменить статус элемента в очереди" as UC_ChangeQueueItemStatus
+  }
+  usecase "Отправить уведомление вручную" as UC_SendManualNotification
+  usecase "Инициировать синхронизацию календаря" as UC_InitiateCalendarSyncSec
+}
+
+secretary -- UC_Login
+secretary -- UC_Logout
+secretary -- UC_ManageProfile
+secretary -- UC_ReceiveNotifications
+secretary -- UC_ViewSystemInfo
+
+secretary -- UC_ManageReceiverSchedule
+secretary -- UC_ViewAllAppointmentsOfReceiver
+secretary -- UC_ConfirmRejectAppointment
+secretary -- UC_ChangeAppointmentStatus
+secretary -- UC_AttachDocumentToAnyAppointment
+secretary -- UC_DownloadDocumentFromAnyAppointment
+
+secretary -- UC_ManageQueue
+secretary -- UC_ViewQueueSec
+secretary -- UC_ChangeQueueItemStatus
+
+secretary -- UC_SendManualNotification
+secretary -- UC_InitiateCalendarSyncSec
+
+(UC_ManageReceiverSchedule) .> (UC_CreateAppointment) : <<include>>
+(UC_ManageReceiverSchedule) .> UC_EditOwnAppointment : <<include>> ' Используем уже объявленный, но контекст меняется
+(UC_ManageReceiverSchedule) .> UC_CancelOwnAppointment : <<include>> ' Аналогично
+
+UC_ConfirmRejectAppointment ..> UC_ReceiveNotifications : <<extend>> "уведомить участников"
+UC_ChangeAppointmentStatus ..> UC_ReceiveNotifications : <<extend>> "уведомить участников"
+UC_ChangeAppointmentStatus ..> UC_SyncExternalCalendar : <<extend>> "обновить календарь" ' Объявим общий UC_SyncExternalCalendar ниже
+
+' ============================================
+' ==     СТРАНИЦА: ПРИНИМАЮЩЕЕ ЛИЦО     ==
+' ============================================
+newpage "Роль: Принимающее лицо"
+
+actor "Принимающее лицо" as receiver
+
+rectangle "Функции Принимающего лица" {
+  usecase "Просмотреть свой график встреч" as UC_ViewOwnScheduledAppointments
+  usecase "Подтвердить/Отклонить свою встречу" as UC_ConfirmRejectOwnAppointment
+  usecase "Редактировать свою встречу" as UC_EditOwnScheduledAppointment
+  usecase "Отменить свою встречу" as UC_CancelOwnScheduledAppointment
+  usecase "Изменить статус своей встречи" as UC_ChangeOwnAppointmentStatus
+  usecase "Управлять своей очередью во время приёма" as UC_ManageOwnQueueDuringReception
+  usecase "Скачать документ со своей встречи" as UC_DownloadDocumentFromOwnScheduledAppointment
+  usecase "Инициировать синхронизацию своего календаря" as UC_InitiateOwnCalendarSync
+}
+
+receiver -- UC_Login
+receiver -- UC_Logout
+receiver -- UC_ManageProfile
+receiver -- UC_ReceiveNotifications
+receiver -- UC_ViewSystemInfo
+
+receiver -- UC_ViewOwnScheduledAppointments
+receiver -- UC_ConfirmRejectOwnAppointment
+receiver -- UC_EditOwnScheduledAppointment
+receiver -- UC_CancelOwnScheduledAppointment
+receiver -- UC_ChangeOwnAppointmentStatus
+receiver -- UC_ManageOwnQueueDuringReception
+receiver -- UC_DownloadDocumentFromOwnScheduledAppointment
+receiver -- UC_InitiateOwnCalendarSync
+
+UC_ConfirmRejectOwnAppointment ..> UC_ReceiveNotifications : <<extend>> "уведомить посетителя"
+UC_ChangeOwnAppointmentStatus ..> UC_ReceiveNotifications : <<extend>> "уведомить посетителя"
+UC_ChangeOwnAppointmentStatus ..> UC_SyncExternalCalendar : <<extend>> "обновить календарь"
+
+
+' ============================================
+' ==       СТРАНИЦА: АДМИНИСТРАТОР        ==
+' ============================================
+newpage "Роль: Администратор"
+
+actor Администратор as admin
+
+rectangle "Функции Администратора" {
+  usecase "Управлять пользователями" as UC_ManageUsers
+  usecase "Управлять ролями" as UC_ManageRoles
+  usecase "Управлять справочниками статусов" as UC_ManageStatusesRefs
+  usecase "Управлять типами уведомлений" as UC_ManageNotificationTypes
+  usecase "Управлять лицензиями" as UC_ManageLicenses
+  usecase "Управлять настройками интеграции" as UC_ManageIntegrationSettings
+  usecase "Просматривать системные журналы" as UC_ViewSystemLogs
+  ' usecase "Резервное копирование и восстановление" as UC_BackupRestoreData ' Если есть
+  ' usecase "Настраивать общие параметры системы" as UC_ConfigureSystemSettings ' Если есть
+}
+
+admin -- UC_Login
+admin -- UC_Logout
+admin -- UC_ManageProfile ' Может управлять и чужими через UC_ManageUsers
+admin -- UC_ReceiveNotifications ' Системные уведомления
+admin -- UC_ViewSystemInfo
+
+admin -- UC_ManageUsers
+admin -- UC_ManageRoles
+admin -- UC_ManageStatusesRefs
+admin -- UC_ManageNotificationTypes
+admin -- UC_ManageLicenses
+admin -- UC_ManageIntegrationSettings
+admin -- UC_ViewSystemLogs
+
+(UC_ManageIntegrationSettings) ..> (UC_ManageLicenses) : <<extend>> ' Настройки зависят от лицензии
+
+
+' ============================================
+' ==        СИСТЕМНЫЕ USE CASES           ==
+' ============================================
+' Эти use cases могут быть вызваны другими use cases или системой
+' Их можно разместить на отдельной странице или в общем разделе
+' Для наглядности, можно объявить их здесь, если они часто используются в <<extend>>
+newpage "Системные/Автоматические функции"
+
+rectangle "Системные функции" {
+  usecase "Синхронизировать с внешним календарем" as UC_SyncExternalCalendar
+  ' usecase "Автоматически отправлять уведомления" as UC_AutoSendNotifications ' Этот use case уже покрыт UC_ReceiveNotifications и <<extend>> связями
+  ' usecase "Автоматически обновлять очередь" as UC_UpdateQueueAutomatically
+}
+
+' Пример связи для UC_SyncExternalCalendar (уже показан выше, но можно тут централизовать)
+' UC_ChangeAppointmentStatus ..> UC_SyncExternalCalendar : <<extend>> "обновить календарь"
+' UC_InitiateCalendarSyncSec ..> UC_SyncExternalCalendar : <<extend>>
+' UC_InitiateOwnCalendarSync ..> UC_SyncExternalCalendar : <<extend>>
+
+@enduml

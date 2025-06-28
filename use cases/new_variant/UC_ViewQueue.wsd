@@ -1,0 +1,17 @@
+@startuml ViewQueue 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Очереди" as Queue
+database "Очередь БД" as QDB
+
+Секретарь -> FE: Выбирает очередь
+FE -> API: GET /queues/{id}
+API -> Queue: Получить очередь
+Queue -> QDB: Запрос элементов
+QDB --> Queue: Данные очереди
+Queue -> Queue: Рассчитать время
+Queue --> API: 200 OK
+API --> FE: Состояние очереди
+FE --> Секретарь: Отображение очереди\nс временем ожидания
+@enduml

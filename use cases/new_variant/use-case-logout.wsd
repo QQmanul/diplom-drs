@@ -1,0 +1,19 @@
+@startuml logout
+actor Пользователь
+participant "Клиент (Frontend)" as Client
+participant "API Gateway" as Gateway
+participant "Auth Service" as Auth
+database "Token Blacklist" as Blacklist
+
+Пользователь -> Client: Нажимает "Выход"
+Client -> Gateway: POST /api/auth/logout\nAuthorization: Bearer {token}
+Gateway -> Auth: Валидация токена
+activate Auth
+
+Auth -> Blacklist: Добавить токен в blacklist
+Auth --> Gateway: 200 OK
+deactivate Auth
+
+Gateway --> Client: Успешный выход
+Client -> Пользователь: Перенаправляет на страницу логина
+@enduml

@@ -1,0 +1,16 @@
+@startuml DownloadDocumentFromOwnScheduledAppointment 
+actor Руководитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Документов" as DocService
+database "Хранилище" as Storage
+
+Руководитель -> FE: Выбирает встречу → документ
+FE -> API: GET /attachments/{id}/file
+API -> DocService: Скачать документ
+DocService -> Storage: Получить файл
+Storage --> DocService: Содержимое файла
+DocService --> API: 200 + файл
+API --> FE: Скачивание файла
+FE --> Руководитель: Файл сохранен
+@enduml

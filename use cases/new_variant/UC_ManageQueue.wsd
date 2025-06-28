@@ -1,0 +1,27 @@
+@startuml ManageQueue 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Очереди" as Queue
+database "Очередь БД" as QDB
+
+== Создание очереди ==
+Секретарь -> FE: Создает новую очередь
+FE -> API: POST /queues\n{"receiver_id": 123}
+API -> Queue: Создать очередь
+Queue -> QDB: Сохранить очередь
+Queue --> API: 201 Created
+API --> FE: ID очереди
+FE --> Секретарь: Подтверждение
+
+== Добавление в очередь ==
+Секретарь -> FE: Выбирает встречи
+loop Для каждой встречи
+  FE -> API: POST /queues/{id}/items\n{"appointment_id": X}
+  API -> Queue: Добавить в очередь
+  Queue -> QDB: Сохранить элемент
+  Queue --> API: 201 Created
+end
+API --> FE: Успех
+FE --> Секретарь: Очередь сформирована
+@enduml

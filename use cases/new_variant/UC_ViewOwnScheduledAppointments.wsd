@@ -1,0 +1,16 @@
+@startuml ViewOwnScheduledAppointments 
+actor Руководитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Календаря" as Calendar
+database "База Данных" as DB
+
+Руководитель -> FE: Открывает "Мой график"
+FE -> API: GET /calendar/me?date=2025-06-03
+API -> Calendar: Получить расписание
+Calendar -> DB: Запрос встреч руководителя
+DB --> Calendar: Список встреч
+Calendar --> API: 200 OK + данные
+API --> FE: Данные графика
+FE --> Руководитель: Отображение расписания\nс цветовой индикацией статусов
+@enduml

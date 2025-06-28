@@ -1,0 +1,30 @@
+@startuml admin
+' uc_admin.wsd
+left to right direction 
+title Роль: Администратор
+
+actor Администратор
+
+rectangle "Функции Администратора" {
+  usecase "Управлять пользователями" as UC_ManageUsers
+  usecase "Управлять ролями" as UC_ManageRoles
+  usecase "Управлять справочниками статусов" as UC_ManageStatusesRefs
+  usecase "Управлять типами уведомлений" as UC_ManageNotificationTypes
+  usecase "Управлять лицензиями" as UC_ManageLicenses
+  usecase "Управлять настройками интеграции" as UC_ManageIntegrationSettings
+  usecase "Просматривать системные журналы" as UC_ViewSystemLogs
+}
+
+' Связи актора с вариантами использования
+Администратор -- UC_ManageUsers
+Администратор -- UC_ManageRoles
+Администратор -- UC_ManageStatusesRefs
+Администратор -- UC_ManageNotificationTypes
+Администратор -- UC_ManageLicenses
+Администратор -- UC_ManageIntegrationSettings
+Администратор -- UC_ViewSystemLogs
+
+' Связь <<extend>>
+UC_ManageIntegrationSettings ..> UC_ManageLicenses : <<extend>>
+
+@enduml

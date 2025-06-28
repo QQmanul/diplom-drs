@@ -1,0 +1,38 @@
+@startuml resiver
+' uc_receiver.wsd
+!pragma layout smetana
+
+title Роль: Принимающее лицо
+
+' === ВКЛЮЧЕНИЕ ОБЩИХ USE CASES (если !include работает) ===
+' !include common_use_cases.iuml
+
+left to right direction 
+
+actor "Принимающее лицо" as receiver
+
+
+rectangle "Функции Принимающего лица" {
+  usecase "Просмотреть свой график встреч" as UC_ViewOwnScheduledAppointments
+  usecase "Подтвердить/Отклонить свою встречу" as UC_ConfirmRejectOwnAppointment
+  usecase "Редактировать свою встречу" as UC_EditOwnScheduledAppointment
+  usecase "Отменить свою встречу" as UC_CancelOwnScheduledAppointment
+  usecase "Изменить статус своей встречи" as UC_ChangeOwnAppointmentStatus
+  usecase "Управлять своей очередью во время приёма" as UC_ManageOwnQueueDuringReception
+  usecase "Скачать документ со своей встречи" as UC_DownloadDocumentFromOwnScheduledAppointment
+  usecase "Инициировать синхронизацию своего календаря" as UC_InitiateOwnCalendarSync
+}
+
+
+
+receiver -- UC_ViewOwnScheduledAppointments
+receiver -- UC_ConfirmRejectOwnAppointment
+receiver -- UC_EditOwnScheduledAppointment
+receiver -- UC_CancelOwnScheduledAppointment
+receiver -- UC_ChangeOwnAppointmentStatus
+receiver -- UC_ManageOwnQueueDuringReception
+receiver -- UC_DownloadDocumentFromOwnScheduledAppointment
+receiver -- UC_InitiateOwnCalendarSync
+
+
+@enduml

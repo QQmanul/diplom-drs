@@ -1,0 +1,16 @@
+@startuml ManageRoles
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Ролей" as RoleService
+database "База Данных" as DB
+
+Администратор -> FE: Открывает "Список ролей"
+FE -> API: GET /roles
+API -> RoleService: Получить список ролей
+RoleService -> DB: Запрос ролей
+DB --> RoleService: Список ролей
+RoleService --> API: 200 OK + данные
+API --> FE: Данные ролей
+FE --> Администратор: Отображение списка ролей
+@enduml

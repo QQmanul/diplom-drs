@@ -1,0 +1,24 @@
+@startuml UC_ViewQueuePosition 
+actor Посетитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Очереди" as Queue
+database "Очередь БД" as QDB
+
+Посетитель -> FE: Открывает детали встречи
+FE -> API: GET /appointments/{id}/queue
+API -> Queue: Получить позицию
+activate Queue
+
+Queue -> QDB: Запрос позиции встречи
+QDB --> Queue: Позиция 3/15
+Queue -> Queue: Рассчитать время ожидания
+Queue --> API: Данные очереди
+API --> FE: Статус очереди
+FE --> Посетитель: Отображение позиции\nи времени ожидания
+deactivate Queue
+
+|||
+Queue -> FE: Push-уведомление (WebSocket)
+FE --> Посетитель: "Скоро ваша очередь!"
+@enduml

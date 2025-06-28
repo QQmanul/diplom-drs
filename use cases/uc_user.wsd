@@ -1,0 +1,25 @@
+@startuml uc_user
+' uc_common_user_functions_vertical.wsd
+!pragma layout smetana
+
+title Общие функции для Пользователя системы
+
+actor Пользователь 
+left to right direction 
+package "Общие функции системы" {
+  usecase "Авторизоваться в системе" as UC_Login
+  usecase "Выйти из системы" as UC_Logout
+  usecase "Управлять своим профилем" as UC_ManageProfile
+  usecase "Получать уведомления" as UC_ReceiveNotifications
+  usecase "Просмотреть справочную информацию" as UC_ViewSystemInfo
+
+
+}
+
+Пользователь -- UC_Login
+Пользователь -- UC_Logout
+Пользователь -- UC_ManageProfile
+Пользователь -- UC_ReceiveNotifications
+Пользователь -- UC_ViewSystemInfo
+
+@enduml

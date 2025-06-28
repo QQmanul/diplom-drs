@@ -1,0 +1,19 @@
+@startuml ChangeAppointmentStatus 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+participant "Сервис Уведомлений" as Notify
+database "База Данных" as DB
+
+Секретарь -> FE: Выбирает встречу и новый статус
+FE -> API: PUT /appointments/{id}/status\n{"status": "перенесена"}
+API -> AppService: Изменить статус
+AppService -> DB: Обновить статус
+DB --> AppService: Подтверждение
+AppService -> Notify: Уведомить участников
+Notify --> AppService: Отправлено
+AppService --> API: 200 OK
+API --> FE: Успех
+FE --> Секретарь: Статус обновлен
+@enduml

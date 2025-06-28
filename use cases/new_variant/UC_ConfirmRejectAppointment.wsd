@@ -1,0 +1,28 @@
+@startuml ConfirmRejectAppointment 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+participant "Сервис Уведомлений" as Notify
+database "База Данных" as DB
+
+Секретарь -> FE: Выбирает заявку
+alt Подтвердить
+  FE -> API: PATCH /appointments/{id}/confirm
+  API -> AppService: Подтвердить встречу
+  AppService -> DB: Обновить статус="подтверждена"
+  AppService -> Notify: Отправить подтверждение
+  Notify --> AppService: Отправлено
+  AppService --> API: 200 OK
+  API --> FE: Успех
+  FE --> Секретарь: Статус изменен
+else Отклонить
+  FE -> API: PATCH /appointments/{id}/reject
+  API -> AppService: Отклонить встречу
+  AppService -> DB: Обновить статус="отклонена"
+  AppService -> Notify: Отправить отказ
+  AppService --> API: 200 OK
+  API --> FE: Успех
+  FE --> Секретарь: Статус изменен
+end
+@enduml

@@ -1,0 +1,37 @@
+@startuml login
+actor Пользователь
+participant "Клиент (Frontend)" as Client
+participant "API Gateway" as Gateway
+participant "Auth Service" as Auth
+participant "Active Directory" as AD
+database "Local DB" as DB
+
+Пользователь -> Client: Вводит логин/пароль
+Client -> Gateway: POST /api/auth/login\n{username, password}
+Gateway -> Auth: Аутентификация
+activate Auth
+
+alt Для сотрудников (AD)
+  Auth -> AD: LDAP запрос
+  activate AD
+  AD --> Auth: Результат
+  deactivate AD
+else Для локальных пользователей
+  Auth -> DB: Проверить credentials
+  activate DB
+  DB --> Auth: Результат
+  deactivate DB
+end
+
+opt Успешная аутентификация
+  Auth -> Auth: Генерирует JWT
+  Auth -> DB: Сохраняет сессию (опционально)
+  Auth --> Gateway: 200 OK {token, userData}
+else Ошибка
+  Auth --> Gateway: 401 Unauthorized
+end
+deactivate Auth
+
+Gateway --> Client: Ответ
+Client -> Пользователь: Отображает результат
+@enduml

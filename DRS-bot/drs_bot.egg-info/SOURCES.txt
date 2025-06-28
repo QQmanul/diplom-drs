@@ -1,0 +1,11 @@
+setup.py
+bot/__init__.py
+bot/database.py
+bot/handlers.py
+bot/signalr_client.py
+bot/utils.py
+drs_bot.egg-info/PKG-INFO
+drs_bot.egg-info/SOURCES.txt
+drs_bot.egg-info/dependency_links.txt
+drs_bot.egg-info/requires.txt
+drs_bot.egg-info/top_level.txt

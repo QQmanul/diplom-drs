@@ -1,0 +1,17 @@
+@startuml AttachDocumentToAnyAppointment 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Документов" as DocService
+database "Хранилище" as Storage
+
+Секретарь -> FE: Выбирает встречу руководителя
+FE -> API: POST /appointments/{id}/attachments
+API -> DocService: Загрузить документ
+DocService -> Storage: Сохранить файл
+Storage --> DocService: Метаданные
+DocService -> DB: Создать запись документа
+DocService --> API: 201 Created
+API --> FE: Успех
+FE --> Секретарь: Документ прикреплен
+@enduml

@@ -1,0 +1,16 @@
+@startuml ManageSystemReferences 
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Справочников" as RefService
+database "База Данных" as DB
+
+Администратор -> FE: Добавляет новый статус
+FE -> API: POST /references/statuses {новый статус}
+API -> RefService: Добавить новый статус
+RefService -> DB: Вставить новый статус
+DB --> RefService: Подтверждение
+RefService --> API: 201 Created
+API --> FE: Успех
+FE --> Администратор: Подтверждение добавления
+@enduml

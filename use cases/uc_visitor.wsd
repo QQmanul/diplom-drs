@@ -1,0 +1,33 @@
+@startuml uc_visitor
+' uc_visitor.wsd
+!pragma layout smetana
+
+title Роль: Посетитель
+
+actor Посетитель
+left to right direction 
+rectangle "Функции Посетителя" {
+  usecase "Создать заявку на встречу" as UC_CreateAppointment
+  usecase "Просмотреть свои встречи" as UC_ViewOwnAppointments
+  usecase "Редактировать свою заявку" as UC_EditOwnAppointment
+  usecase "Отменить свою заявку" as UC_CancelOwnAppointment
+  usecase "Прикрепить документ к встрече" as UC_AttachDocumentToOwnAppointment
+  usecase "Скачать документ со встречи" as UC_DownloadDocumentFromOwnAppointment
+  usecase "Просмотреть свою позицию в очереди" as UC_ViewQueuePosition
+}
+
+Посетитель -- UC_CreateAppointment
+Посетитель -- UC_ViewOwnAppointments
+Посетитель -- UC_EditOwnAppointment
+Посетитель -- UC_CancelOwnAppointment
+Посетитель -- UC_AttachDocumentToOwnAppointment
+Посетитель -- UC_DownloadDocumentFromOwnAppointment
+Посетитель -- UC_ViewQueuePosition
+
+' The extend relationships are kept as per your original code.
+' Note: In standard UML, <<extend>> is between use cases.
+' Here, it points to an alias representing an actor.
+' PlantUML will draw UC_CreateAppointment extending the actor UC_ReceiveNotifications_Actor.
+
+
+@enduml

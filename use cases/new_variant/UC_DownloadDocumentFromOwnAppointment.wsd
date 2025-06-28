@@ -1,0 +1,21 @@
+@startuml UC_DownloadDocument 
+actor Посетитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Документов" as DocService
+database "Хранилище" as Storage
+
+Посетитель -> FE: Кликает на документ
+FE -> API: GET /attachments/{id}/file
+API -> DocService: Получить документ
+activate DocService
+
+DocService -> DB: Проверить права доступа
+DB --> DocService: Права подтверждены
+DocService -> Storage: Получить файл
+Storage --> DocService: Содержимое файла
+DocService --> API: 200 + файл
+API --> FE: Скачивание файла
+FE --> Посетитель: Диалог сохранения
+deactivate DocService
+@enduml

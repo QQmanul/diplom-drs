@@ -1,0 +1,16 @@
+@startuml ManageIntegrationSettings 
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Интеграций" as IntegrationService
+database "База Данных" as DB
+
+Администратор -> FE: Настраивает интеграцию с Active Directory
+FE -> API: PUT /integrations/ad {настройки}
+API -> IntegrationService: Обновить настройки AD
+IntegrationService -> DB: Сохранить настройки
+DB --> IntegrationService: Подтверждение
+IntegrationService --> API: 200 OK
+API --> FE: Успех
+FE --> Администратор: Подтверждение сохранения
+@enduml

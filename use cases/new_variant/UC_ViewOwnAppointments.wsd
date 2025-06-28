@@ -1,0 +1,19 @@
+@startuml ViewOwnAppointments
+actor Посетитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+database "База Данных" as DB
+
+Посетитель -> FE: Открывает "Мои встречи"
+FE -> API: GET /appointments?status=requested
+API -> AppService: Получить встречи
+activate AppService
+
+AppService -> DB: Запрос встреч пользователя
+DB --> AppService: Список встреч
+AppService --> API: 200 OK
+API --> FE: Данные встреч
+FE --> Посетитель: Отображение списка\nсо статусами
+deactivate AppService
+@enduml

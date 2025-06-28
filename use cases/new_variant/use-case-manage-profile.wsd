@@ -1,0 +1,34 @@
+@startuml manage-profile
+actor Пользователь
+participant "Клиент (Frontend)" as Client
+participant "API Gateway" as Gateway
+participant "Profile Service" as Profile
+database "Local DB" as DB
+
+== Просмотр профиля ==
+Пользователь -> Client: Запрос профиля
+Client -> Gateway: GET /api/profile\nAuthorization: Bearer {token}
+Gateway -> Profile: Запрос данных
+activate Profile
+
+Profile -> DB: Получить данные пользователя
+Profile --> Gateway: 200 OK {profileData}
+deactivate Profile
+
+Gateway --> Client: Данные профиля
+Client -> Пользователь: Отображает информацию
+
+== Редактирование телефона ==
+Пользователь -> Client: Вводит новые данные
+Client -> Gateway: PATCH /api/profile/\n{ "user": {} }\nAuthorization: Bearer {token}
+Gateway -> Profile: Обновление
+activate Profile
+
+Profile -> DB: Обновить профиль
+DB --> Profile: Подтверждение
+Profile --> Gateway: 200 OK {updatedProfile}
+deactivate Profile
+
+Gateway --> Client: Обновленные данные
+Client -> Пользователь: Отображает новые данные
+@enduml

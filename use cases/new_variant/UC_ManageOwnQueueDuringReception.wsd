@@ -1,0 +1,38 @@
+@startuml ManageOwnQueueDuringReception 
+actor Руководитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Очереди" as Queue
+participant "Сервис Уведомлений" as Notify
+database "Очередь БД" as QDB
+
+== Вызов следующего ==
+Руководитель -> FE: Нажимает "Следующий"
+FE -> API: POST /queues/{id}/next
+API -> Queue: Вызвать следующего
+Queue -> QDB: Получить следующего
+QDB --> Queue: Данные посетителя
+Queue -> Notify: Отправить уведомление
+Queue --> API: 200 OK
+API --> FE: Данные посетителя
+FE --> Руководитель: Информация о посетителе
+
+== Завершение приема ==
+Руководитель -> FE: Нажимает "Завершить прием"
+FE -> API: PATCH /queues/{id}/status\n{"status": "completed"}
+API -> Queue: Завершить очередь
+Queue -> QDB: Обновить статус
+Queue -> Notify: Уведомить секретаря
+Queue --> API: 200 OK
+API --> FE: Успех
+FE --> Руководитель: Подтверждение
+
+== Перерыв ==
+Руководитель -> FE: Нажимает "Перерыв"
+FE -> API: POST /queues/{id}/break\n{"duration": 15}
+API -> Queue: Зарегистрировать перерыв
+Queue -> QDB: Сохранить перерыв
+Queue --> API: 201 Created
+API --> FE: Успех
+FE --> Руководитель: Таймер перерыва
+@enduml

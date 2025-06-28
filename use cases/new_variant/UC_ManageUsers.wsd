@@ -1,0 +1,16 @@
+@startuml ManageUsers 
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Пользователей" as UserService
+database "База Данных" as DB
+
+Администратор -> FE: Заполняет форму создания пользователя
+FE -> API: POST /users {данные пользователя}
+API -> UserService: Создать пользователя
+UserService -> DB: Вставить нового пользователя
+DB --> UserService: ID нового пользователя
+UserService --> API: 201 Created + ID
+API --> FE: Успех
+FE --> Администратор: Подтверждение создания
+@enduml

@@ -1,0 +1,30 @@
+@startuml edit
+actor Посетитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+participant "Сервис Календаря" as Calendar
+database "База Данных" as DB
+
+Посетитель -> FE: Выбирает встречу для редактирования
+FE -> API: PUT /appointments/{id}
+API -> AppService: Обновить встречу
+activate AppService
+
+AppService -> DB: Проверить статус
+DB --> AppService: Статус = "запрошена"
+AppService -> Calendar: Проверить новый слот
+Calendar --> AppService: Доступность
+alt Слот доступен
+  AppService -> DB: Обновить встречу
+  DB --> AppService: Обновлено
+  AppService --> API: 200 OK
+  API --> FE: Успех
+  FE --> Посетитель: Новые данные
+else Слот занят
+  AppService --> API: 409 Конфликт
+  API --> FE: Ошибка
+  FE --> Посетитель: Предложить альтернативы
+end
+deactivate AppService
+@enduml

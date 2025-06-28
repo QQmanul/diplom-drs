@@ -1,0 +1,19 @@
+@startuml ChangeQueueItemStatus 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Очереди" as Queue
+participant "Сервис Уведомлений" as Notify
+database "Очередь БД" as QDB
+
+Секретарь -> FE: Выбирает элемент очереди
+FE -> API: PATCH /queue_items/{itemId}\n{"status": "в процессе"}
+API -> Queue: Обновить статус
+Queue -> QDB: Изменить статус
+QDB --> Queue: Обновлено
+Queue -> Notify: Уведомить посетителя
+Notify --> Queue: Отправлено
+Queue --> API: 200 OK
+API --> FE: Успех
+FE --> Секретарь: Статус изменен
+@enduml

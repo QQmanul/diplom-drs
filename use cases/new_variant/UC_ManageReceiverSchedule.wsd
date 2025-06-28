@@ -1,0 +1,24 @@
+@startuml ManageReceiverSchedule 
+actor Секретарь
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Календаря" as Calendar
+participant "Сервис Встреч" as AppService
+database "База Данных" as DB
+
+Секретарь -> FE: Выбирает руководителя
+FE -> API: GET /receivers/{id}/schedule
+API -> Calendar: Получить график
+Calendar --> API: График встреч
+API --> FE: Данные графика
+FE --> Секретарь: Отображение графика
+
+Секретарь -> FE: Добавляет новую встречу
+FE -> API: POST /appointments (для руководителя)
+API -> AppService: Создать встречу
+AppService -> DB: Сохранить встречу
+DB --> AppService: ID встречи
+AppService --> API: 201 Created
+API --> FE: Успех
+FE --> Секретарь: Подтверждение
+@enduml

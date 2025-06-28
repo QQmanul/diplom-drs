@@ -1,0 +1,16 @@
+@startuml ManageLicenses  
+actor Администратор
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Лицензий" as LicenseService
+database "База Данных" as DB
+
+Администратор -> FE: Просматривает информацию о лицензии
+FE -> API: GET /licenses
+API -> LicenseService: Получить информацию о лицензии
+LicenseService -> DB: Запрос лицензии
+DB --> LicenseService: Данные лицензии
+LicenseService --> API: 200 OK + данные
+API --> FE: Данные лицензии
+FE --> Администратор: Отображение информации о лицензии
+@enduml

@@ -1,0 +1,19 @@
+@startuml CancelOwnScheduledAppointment 
+actor Руководитель
+participant "Фронтенд" as FE
+participant "API Шлюз" as API
+participant "Сервис Встреч" as AppService
+participant "Сервис Очереди" as Queue
+participant "Сервис Уведомлений" as Notify
+
+Руководитель -> FE: Нажимает "Отменить встречу"
+FE -> API: DELETE /appointments/{id}
+API -> AppService: Отменить встречу
+AppService -> Queue: Удалить из очереди (если есть)
+Queue --> AppService: Подтверждение
+AppService -> DB: Обновить статус="отменена"
+AppService -> Notify: Уведомить посетителя
+AppService --> API: 200 OK
+API --> FE: Успех
+FE --> Руководитель: Подтверждение отмены
+@enduml
